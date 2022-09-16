@@ -40,7 +40,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [loading, setLoading] = useState(false)
     const [user, setUser] = useState<User | null>(null)
-    const [error, setError] = useState(null)
+    const [error] = useState(null)
     const [initialLoading, setInitialLoading] = useState(true)
     const router = useRouter()
 
@@ -56,9 +56,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     // Not logged in...
                     setUser(null)
                     setLoading(true)
-                    router.push('/login')
+                    router.push('/')
                 }
-
                 setInitialLoading(false)
             }),
         [auth]
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         await createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 setUser(userCredential.user)
-                router.push('/')
+                router.push('/browse')
                 setLoading(false)
             })
             .catch((error) => alert(error.message))
@@ -83,7 +82,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         await signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 setUser(userCredential.user)
-                router.push('/')
+                router.push('/browse')
                 setLoading(false)
             })
             .catch((error) => alert(error.message))

@@ -6,6 +6,7 @@ import { GetStaticProps } from 'next'
 import { getProducts, Product } from '@stripe/firestore-stripe-payments'
 import payments from '../src/lib/stripe'
 import Membership from '../src/components/Membership'
+import moment from 'moment'
 
 interface Props {
     products: Product[]
@@ -27,6 +28,7 @@ function Account({ products }: Props) {
             <header className={`bg-[#141414]`}>
                 <Link href="/">
                     <img
+                        alt="netflix-logo"
                         src="https://rb.gy/ulxxee"
                         width={120}
                         height={120}
@@ -52,7 +54,7 @@ function Account({ products }: Props) {
                             className="h-7 w-7"
                         />
                         <p className="text-xs font-semibold text-[#555]">
-                            멤버십 시작 : {subscription?.created}
+                            멤버십 시작 : {moment(subscription?.created).format("YYYY년 MM월 DD일")}
                         </p>
                     </div>
                 </div>
@@ -61,7 +63,6 @@ function Account({ products }: Props) {
 
                 <div className="mt-6 grid grid-cols-1 gap-x-4 border px-4 py-4 md:grid-cols-4 md:border-x-0 md:border-t md:border-b-0 md:px-0 md:pb-0">
                     <h4 className="text-lg text-[gray]">멤버십 상세 정보</h4>
-                    {/*Find the current plan*/}
                     <div className="col-span-2 font-medium">
                         {
                             products.filter(

@@ -1,126 +1,95 @@
 import Head from 'next/head'
-import Header from '../src/components/Header'
-import Banner from '../src/components/Banner'
-import requests from '../src/utils/requests'
-import { Movie } from '../typings'
-import Row from '../src/components/Row'
+import Image from 'next/image'
+import { useForm } from 'react-hook-form'
 import useAuth from '../src/hooks/useAuth'
-import { useRecoilValue } from 'recoil'
-import { modalState, movieState } from '../src/atoms/modalAtom'
-import Modal from '../src/components/Modal'
-import Plans from '../src/components/Plans'
-import {
-    getProduct,
-    getProducts,
-    Product,
-} from '@stripe/firestore-stripe-payments'
-import payments from '../src/lib/stripe'
-import useSubscription from '../src/hooks/useSubscription'
-import useList from '../src/hooks/useList'
+import { useRouter } from 'next/router'
+import { ChevronRightIcon } from '@heroicons/react/24/outline'
 
-interface Props {
-    netflixOriginals: Movie[]
-    trendingNow: Movie[]
-    topRated: Movie[]
-    actionMovies: Movie[]
-    comedyMovies: Movie[]
-    horrorMovies: Movie[]
-    romanceMovies: Movie[]
-    documentaries: Movie[]
-    products: Product[]
+interface Inputs {
+    email: string
+    password: string
 }
 
-const Home = ({
-    netflixOriginals,
-    trendingNow,
-    topRated,
-    actionMovies,
-    comedyMovies,
-    horrorMovies,
-    romanceMovies,
-    documentaries,
-    products,
-}: Props) => {
-    const { logout, loading, user } = useAuth()
-    const showModal = useRecoilValue(modalState)
-    const subscription = useSubscription(user)
-    const movie = useRecoilValue(movieState)
-    const list = useList(user?.uid)
+function Home() {
+    const { user } = useAuth()
+    const router = useRouter()
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<Inputs>()
 
-    if (loading || subscription === null) return null
+    const onSubmit = () => {
+        router.push('/login')
+    }
 
-    if (!subscription) return <Plans products={products} />
+    if (user) {
+        router.replace('/browse')
+    } else
+        return (
+            <div className="flex h-screen w-screen items-center justify-center">
+                <Head>
+                    <title>Netflix</title>
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <Image
+                    src="https://rb.gy/p2hphi"
+                    layout="fill"
+                    className="-z-10 !hidden opacity-60 sm:!inline"
+                    objectFit="cover"
+                />
+                <header className="h-30 items-center">
+                    <img
+                        alt="netflix-logo"
+                        src="https://rb.gy/ulxxee"
+                        className="md:left-10 md:top-6"
+                        width={150}
+                        height={150}
+                    />
 
-    return (
-        <div className="relative h-screen bg-gradient-to-b lg:h-[140vh]">
-            <Head>
-                <title>Home - Netflix</title>
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
+                    <button
+                        className="z-50 rounded bg-[#E50914] px-5 py-1.5"
+                        onClick={() => router.push('/login')}
+                    >
+                        로그인
+                    </button>
+                </header>
+                <form className="z-30" onSubmit={handleSubmit(onSubmit)}>
+                    <h1 className="pb-5 text-center text-6xl font-bold leading-tight">
+                        영화와 시리즈를
+                        <br /> 무제한으로.
+                    </h1>
 
-            <Header />
-            <main className="relative pl-4 pb-24 lg:space-y-24 lg:pl-16">
-                <Banner netflixOriginals={netflixOriginals} />
-                <section className="md:space-y-24">
-                    <Row title="지금 뜨는 콘텐츠" movies={trendingNow} />
-                    <Row title="Top 시리즈" movies={topRated} />
-                    <Row title="액션 SF" movies={actionMovies} />
-                    {/* My List Component*/}
-                    {list?.length > 0 && (
-                        <Row title="내가 찜한 콘텐츠" movies={list} />
+                    <h2 className="pb-10 text-center text-2xl leading-tight">
+                        다양한 디바이스에서 시청하세요. 언제든 해지하실 수
+                        있습니다.
+                    </h2>
+
+                    <h3 className="pb-10 text-center text-lg leading-tight">
+                        시청할 준비가 되셨나요? 멤버십을 등록하거나 재시작하려면
+                        이메일 주소를 입력하세요.
+                    </h3>
+
+                    <label className="inline-block flex h-[70px] w-full justify-center">
+                        <input
+                            type="email"
+                            placeholder="이메일 주소"
+                            className="w-[500px] items-center justify-center border-b border-r border-black px-5 py-4 text-lg text-black"
+                            {...register('email', { required: true })}
+                        />
+                        <button className="flex items-center justify-center border-b border-black bg-[#E50914] px-8 py-4 text-2xl">
+                            시작하기
+                            <ChevronRightIcon className="h-5 w-5" />
+                        </button>
+                    </label>
+                    {errors.email && (
+                        <p className="p-1 text-[13px] font-light text-orange-500">
+                            정확한 이메일 주소를 입력하세요.
+                        </p>
                     )}
-                    <Row title="코미디 영화" movies={comedyMovies} />
-                    <Row title="호러 영화" movies={horrorMovies} />
-                    <Row title="로맨틱한 영화" movies={romanceMovies} />
-                    <Row title="다큐멘터리" movies={documentaries} />
-                </section>
-            </main>
-            {showModal && <Modal />}
-        </div>
-    )
+                </form>
+            </div>
+        )
 }
 
 export default Home
-
-export const getServerSideProps = async () => {
-    const products = await getProducts(payments, {
-        includePrices: true,
-        activeOnly: true,
-    })
-        .then((res) => res)
-        .catch((error) => console.log(error.message))
-
-    const [
-        netflixOriginals,
-        trendingNow,
-        topRated,
-        actionMovies,
-        comedyMovies,
-        horrorMovies,
-        romanceMovies,
-        documentaries,
-    ] = await Promise.all([
-        fetch(requests.fetchNetflixOriginals).then((res) => res.json()),
-        fetch(requests.fetchTrending).then((res) => res.json()),
-        fetch(requests.fetchTopRated).then((res) => res.json()),
-        fetch(requests.fetchActionMovies).then((res) => res.json()),
-        fetch(requests.fetchComedyMovies).then((res) => res.json()),
-        fetch(requests.fetchHorrorMovies).then((res) => res.json()),
-        fetch(requests.fetchRomanceMovies).then((res) => res.json()),
-        fetch(requests.fetchDocumentaries).then((res) => res.json()),
-    ])
-
-    return {
-        props: {
-            netflixOriginals: netflixOriginals.results,
-            trendingNow: trendingNow.results,
-            topRated: topRated.results,
-            actionMovies: actionMovies.results,
-            comedyMovies: comedyMovies.results,
-            horrorMovies: horrorMovies.results,
-            romanceMovies: romanceMovies.results,
-            documentaries: documentaries.results,
-            products,
-        },
-    }
-}

@@ -3,6 +3,7 @@ import Loader from './Loader'
 import useAuth from '../hooks/useAuth'
 import { useState } from 'react'
 import { goToBillingPortal } from '../lib/stripe'
+import moment from 'moment'
 
 function Membership() {
     const [isBillingLoading, setIsBillingLoading] = useState(false)
@@ -43,8 +44,14 @@ function Membership() {
                     <div>
                         <p>
                             {subscription?.cancel_at_period_end
-                                ? `${subscription?.current_period_end}에 멤버십이 종료됩니다.`
-                                : `다음 결제일은 ${subscription?.current_period_end} 입니다.`}
+                                ? `${moment(
+                                      subscription?.current_period_end
+                                  ).format(
+                                      'YYYY년 MM월 DD일'
+                                  )}에 멤버십이 종료됩니다.`
+                                : `다음 결제일은 ${moment(
+                                      subscription?.current_period_end
+                                  ).format('YYYY년 MM월 DD일')} 입니다.`}
                         </p>
                     </div>
                     <div className="md:text-right">

@@ -24,31 +24,34 @@ function Banner({ netflixOriginals }: Props) {
         )
     }, [netflixOriginals])
 
-
     return (
-        <div className="flex flex-col space-y-2 py-16 md:space-y-4 lg:h-[65vh] lg:justify-end lg:pb-12">
-            <div className="absolute top-0 left-0 -z-10 h-screen w-screen">
-                <Image
-                    src={`${baseUrl}${
-                        movie?.backdrop_path || movie?.poster_path
-                    }`}
-                    width={100}
-                    height={100}
-                    layout="responsive"
-                    objectFit="contain"
-                    objectPosition="top"
-                />
+        <div className="z-20 flex flex-col space-y-2 py-16 md:space-y-4 lg:h-[65vh] lg:justify-end lg:pb-12">
+            <div className="absolute top-0 left-0  w-screen bg-gradient-to-b">
+                <div className="relative top-0 left-0 -z-30 h-screen w-screen  ">
+                    {movie && (
+                        <Image
+                            src={`${baseUrl}${
+                                movie?.backdrop_path || movie?.poster_path
+                            }`}
+                            width={100}
+                            height={100}
+                            layout="fill"
+                            objectFit="contain"
+                            objectPosition="top"
+                        />
+                    )}
+                </div>
             </div>
-            <h1 className="text-2xl font-bold md:text-4xl lg:text-7xl">
+            <h1 className="z-10 text-2xl font-bold md:text-4xl lg:text-7xl">
                 {movie?.title || movie?.name || movie?.original_name}
             </h1>
-            <p className="max-w-xs text-xs text-shadow-md md:max-w-lg md:text-lg lg:max-w-2xl lg:text-2xl">
+            <p className="z-10 max-w-xs text-xs text-shadow-md md:max-w-lg md:text-lg lg:max-w-2xl lg:text-2xl">
                 {movie?.overview.length! < 200
                     ? movie?.overview
                     : movie?.overview.substr(0, 200) + '...'}
             </p>
 
-            <div className="flex space-x-3">
+            <div className="z-10 flex space-x-3">
                 <button className="bannerButton bg-white text-black">
                     <FaPlay className="h-4 w-4 text-black md:h-7 md:w-7" />
                     재생
