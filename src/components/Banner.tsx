@@ -27,15 +27,16 @@ function Banner({ netflixOriginals }: Props) {
     return (
         <div className="z-20 flex flex-col space-y-2 py-16 md:space-y-4 lg:h-[65vh] lg:justify-end lg:pb-12">
             <div className="absolute top-0 left-0  w-screen bg-gradient-to-b">
-                <div className="relative top-0 left-0 -z-30 h-screen w-screen  ">
+                <div className="relative top-0 left-0 -z-30 h-[400px] w-screen sm:h-[500px] md:h-[600px] lg:h-[750px] xl:h-[870px] 2xl:h-[1100px] ">
                     {movie && (
                         <Image
+                            priority={true}
                             src={`${baseUrl}${
                                 movie?.backdrop_path || movie?.poster_path
                             }`}
                             width={100}
                             height={100}
-                            layout="fill"
+                            layout="responsive"
                             objectFit="contain"
                             objectPosition="top"
                         />
