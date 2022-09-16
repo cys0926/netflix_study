@@ -101,7 +101,7 @@ function Search() {
                        gap-x-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
                     >
                         {movies?.map((movie) => (
-                            <Thumbnail movie={movie} />
+                            <Thumbnail key={movie.id} movie={movie} />
                         ))}
                     </div>
                 </div>
