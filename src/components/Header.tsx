@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useRecoilState } from 'recoil'
 import { searchValueState } from '../atoms/searchAtom'
 
-const Header = React.memo(() => {
+function Header() {
     const [isScrolled, setIsScrolled] = useState(false)
     const [inputValue, setInputValue] = useState('')
     const [searchValue, setSearchValue] = useRecoilState(searchValueState)
@@ -153,6 +153,6 @@ const Header = React.memo(() => {
     ) : (
         <></>
     )
-})
+}
 
 export default Header
